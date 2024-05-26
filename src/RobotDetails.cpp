@@ -14,8 +14,7 @@ public:
     gazebo_msgs::GetModelState robotPose;
     ros::NodeHandle n;
 
-    ros::ServiceClient client = 
-    n.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
+    ros::ServiceClient client
     RobotDetails(/* args */);
     ~RobotDetails();
 };
@@ -28,7 +27,11 @@ RobotDetails::RobotDetails(/* args */)
 
 RobotDetails::~RobotDetails()
 {
+    ros::ServiceClient client = 
+    n.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
+
     robotPose.request.model_name = name;
+    
     if (!client.call(robotPose)){
         ROS_INFO("Error: unsuccessful robot info retrieval: %s", name);
         rate.sleep();

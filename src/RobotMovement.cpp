@@ -1,25 +1,24 @@
-#include <ros/ros.h>
+#include <gazebo_msgs/GetModelState.h>
 
 class RobotMovement
 {
 private:
     /* data */
 public:
-
-    MoveUp(){
-
+    void MoveUp(gazebo_msgs::GetModelState state){
+        state.pose.position.y += 1;
     }
 
-    MoveDown(){
-
+    void MoveDown(gazebo_msgs::GetModelState state){
+        state.pose.position.y -= 1;
     }
 
-    MoveLeft(){
-
+    void MoveRight(gazebo_msgs::GetModelState state){
+        state.pose.position.x += 1;
     }
 
-    MoveRight(){
-
+    void MoveLeft(gazebo_msgs::GetModelState state){
+        state.pose.position.x -= 1;
     }
 };
 
