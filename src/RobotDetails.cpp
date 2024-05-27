@@ -2,13 +2,16 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <vector>
+#include <AbstractSimulator.cpp>
 #include <RobotMovement.cpp>
 #include <ros/ros.h>
 #include <gazebo_msgs/GetModelState.h>
 #include <geometry_msgs/Pose.h>
 #include <tf/tf.h>
 
-class RobotDetails
+
+
+class RobotDetails: public AbstractSimulator
 {
 public:
     std::string modelName;
@@ -18,8 +21,8 @@ public:
 
     RobotDetails(std::string name);
 
-    bool SetState(double x, double y);
-    bool GetState(double &x, double &y);
+    bool SetPos(double x, double y);
+    bool GetPos(double &x, double &y);
 };
 
 // im thinking the txt file goes here to initialise things.
@@ -31,7 +34,7 @@ RobotDetails::RobotDetails(std::string name)
     modelName = name;
 }
 
-bool RobotDetails::SetState(double x, double y){
+bool RobotDetails::SetPos(double x, double y){
     gazebo_msgs::SetModelState setModelState;
     gazebo_msgs::ModelState modelState;
 
@@ -56,7 +59,7 @@ bool RobotDetails::SetState(double x, double y){
     return true;
 }
 
-bool RobotDetails::GetState(double &x, double &y){
+bool RobotDetails::GetPos(double &x, double &y){
     gazebo_msgs::GetModelState getModelState;
     getModelState.request.model_name = modelName;
 

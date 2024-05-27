@@ -11,12 +11,14 @@ private:
 public:
     virtual AbstractSimulator(std::string name);
 
-    virtual void SetPos(double &x, double y);
-    virtual void GetPos(double &x, double y);
+    virtual bool SetPos(double &x, double y);
+    virtual bool GetPos(double &x, double y);
 
     std::string modelName;
 };
 
-
+virtual AbstractSimulator::AbstractSimulator(std::string name){
+    modelName = name;
+}
 
 
