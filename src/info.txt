@@ -1,0 +1,15 @@
+robot
+name: bot1
+pos_x: 1
+pos_y: 0
+}
+robot
+name: bot2
+pos_x: 1
+pos_y: 0
+}
+bowl
+name: bowl1
+pos_x: 5
+pos_y: 5
+}
