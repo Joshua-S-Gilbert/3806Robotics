@@ -12,7 +12,8 @@ class RobotDetails
 {
 public:
     std::string name;
-    gazebo_msgs::GetModelState robotPose;
+    gazebo_msgs::GetModelState getRobotPose;
+    gazebo_msgs::SetModelState setRobotPose;
     ros::NodeHandle n;
 
     RobotMovement move;
@@ -20,6 +21,16 @@ public:
     ros::ServiceClient client
     RobotDetails(/* args */);
     ~RobotDetails();
+
+    void UpdateState(){
+        if (client.call(getRobotPose)){
+            setRobotPose.request.model_state = getRobotPose;
+            client.call(setRobotPose);
+            if (!setRobotPose.response.success){
+                ROS_INFO("Error: didnt set robot post: %s", name);
+            }
+        }
+    }
 };
 
 // im thinking the txt file goes here to initialise things. 
@@ -33,11 +44,7 @@ RobotDetails::~RobotDetails()
     ros::ServiceClient client = 
     n.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state");
 
-    robotPose.request.model_name = name;
-
-    if (!client.call(robotPose)){
-        ROS_INFO("Error: unsuccessful robot info retrieval: %s", name);
-        rate.sleep();
-        continue;
-    }
+    getRobotPose.request.model_name = name;
+    move.up(getRobotPose);
+    UpdateState();
 }
