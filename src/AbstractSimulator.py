@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 
 class AbstractSimulator(ABC):
     @abstractmethod
-    def __init__(self, modelName):
+    def __init__(self, modelName, movementDelay=1):
         self.modelName = modelName
-        self.movementDelay = 1
+        self.movementDelay = movementDelay
         
     @abstractmethod
     def RunSimulation(fileName:str):

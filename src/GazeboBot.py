@@ -4,14 +4,27 @@ from gazebo_msgs.msg import ModelState
 import tf
 import AbstractSimulator
 import tf.transformations
+import time
+
 
 class GazeboBot(AbstractSimulator.AbstractSimulator):
-    def __init__(self, modelName):
+    def __init__(self, modelName, movementDelay=1):
         self.modelName=modelName
+        self.movementDelay = movementDelay
         rospy.wait_for_service("/gazebo/set_model_state")
         rospy.wait_for_service("/gazebo/get_model_state")
+        rospy.init_node('gazebo_bot_node', anonymous=True)
         self.SetStateService = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
         self.GetStateService = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
+
+    def RunSimulation(self, fileName:str):
+        with open(fileName, "r") as file:
+            lines = file.readlines()
+            for i in range(len(lines)):
+                line = lines[i].strip().split(',')
+                self.SetPos(float(line[0]), float(line[1]))
+                time.sleep(self.movementDelay)
+
 
     def SetPos(self, x, y):
         try:

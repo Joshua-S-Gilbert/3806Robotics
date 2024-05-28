@@ -9,7 +9,7 @@ class Environment:
         self.numberObstacles = 0
         self.numberTargets = 1
         self.gridSize = [8,8]
-        self.startingPos = [0,0]
+        self.startingPos = np.asarray([0,0])
         self.generateGrid = False
         self.worldGrid = []
 
@@ -75,7 +75,7 @@ class Environment:
             row = random.randint(0, self.gridSize[0]-1)
             col = random.randint(0, self.gridSize[1]-1)
             if (self.worldGrid[row][col] == self.unvisited):
-                self.startingPos = [row, col]
+                self.startingPos = np.asarray([row, col])
                 FoundStartingPosition=True
 
     def PlaceItems(self, item, count):
