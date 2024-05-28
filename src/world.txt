@@ -2,6 +2,7 @@ unvisited O
 obstacle B
 numberObstacles 4
 target G
+invalid N
 numberTargets 1
 gridSize 8,8
 startingPos 1,0
