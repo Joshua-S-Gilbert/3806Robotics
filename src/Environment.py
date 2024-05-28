@@ -5,13 +5,11 @@ import random
 class Environment:
     def __init__(self, fileName):
         #map data
-        self.unvisited = "O"
-        self.obstacle = "B"
+        self.stateTypes = {"unvisited":"O","obstacle":"B","target":"G","invalid":"N"}
         self.numberObstacles = 0
-        self.target = "G"
         self.numberTargets = 1
         self.gridSize = [8,8]
-        self.startingPos = [1,0]
+        self.startingPos = [0,0]
         self.generateGrid = False
         self.worldGrid = []
 
@@ -21,17 +19,15 @@ class Environment:
         try:
             with open(fileName, "r") as file:
                 lines = file.readlines()
-                for i in range(8):
+                numVars = 9
+                for i in range(numVars):
                     # prop meants property. there is a default method called property
                     prop, value = lines[i].strip().split()
-                    if (hasattr(self, prop)):
-                        setattr(self, prop, self.ConvertValue(value))
-                    else:
-                        print(f"Error: couldn't find attribute: {prop}")
+                    self.ConvertValue(prop, value)
                 if not self.generateGrid:
                     gridlength = 0
                     self.worldGrid = np.zeros((self.gridSize[0], self.gridSize[1]), dtype=str)
-                    for i in range(9, len(lines)):
+                    for i in range(numVars, len(lines)):
                         self.worldGrid.append([])
                         for j in range(len(lines[i])):
                             self.worldGrid[i][j].append(lines[i][j])
@@ -46,7 +42,7 @@ class Environment:
             print(f"Error: error occured loading config file: {error}")
 
     @staticmethod
-    def ConvertValue(value=""):
+    def ConvertValue(self, prop:str, value:str):
         if value.find(",") != -1:
             tempList = []
             tempListstring = value.split(',')
@@ -55,21 +51,34 @@ class Environment:
                     tempList.append(int(tempListstring[i]))
             except Exception as error:
                 print(f"Error: failed to read gridSize or startingPos. {error}")
-            return tempList
+            self.UpdateProperty(prop, tempList)
         elif value.isdigit():
-            return int(value)
+            self.UpdateProperty(prop, int(value))
         elif value == "True":
-            return True
+            self.UpdateProperty(prop, True)
         elif value == "False":
-            return False
+            self.UpdateProperty(prop, False)
         else:
-            return value
+            self.stateTypes[prop] = value
+    
+    def UpdateProperty(self, prop:str, value):
+        if hasattr(self, prop):
+            setattr(self, prop, value)
+        else:
+            print(f"Error: couldnt find property {prop}")
 
     def GenerateGrid(self):
         self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), fill_value="O", dtype=str)
         self.PlaceItems(self.obstacle, self.numberObstacles)
-        self.PlaceItems(self.obstacle, self.numberTargets)
-    
+        self.PlaceItems(self.target, self.numberTargets)
+        FoundStartingPosition = False
+        while not FoundStartingPosition:
+            row = random.randint(0, self.gridSize[0]-1)
+            col = random.randint(0, self.gridSize[1]-1)
+            if (self.worldGrid[row][col] == self.unvisited):
+                self.startingPos = [row, col]
+                FoundStartingPosition=True
+
     def PlaceItems(self, item, count):
         placedCount = 0
         while placedCount < count:
@@ -81,10 +90,11 @@ class Environment:
 
     def WriteWorld(self, fileName):
         with open(fileName, "w") as file:
-            file.write(f"unvisited {self.unvisited}")
-            file.write(f"obstacle {self.obstacle}")
+            file.write(f"unvisited {self.stateTypes["unvisited"]}")
+            file.write(f"obstacle {self.stateTypes["obstacle"]}")
             file.write(f"numberObstacles {self.numberObstacles}")
-            file.write(f"target {self.target}")
+            file.write(f"target {self.stateTypes["target"]}")
+            file.write(f"invalid {self.stateTypes["invalid"]}")
             file.write(f"numberTargets {self.numberTargets}")
             file.write(f"gridSize {self.gridSize[0]},{self.gridSize[1]}")
             file.write(f"startingPos {self.startingPos[0]},{self.startingPos[1]}")
