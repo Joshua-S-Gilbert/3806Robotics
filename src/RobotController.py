@@ -57,15 +57,7 @@ class RobotController:
             return self.rewardStep
 
     def IsGoal(self, worldGrid, gridSize, stateTypes):
-        return self.checkState(self.state, worldGrid, gridSize, stateTypes) == stateTypes
+        return self.checkState(self.state, worldGrid, gridSize, stateTypes) == stateTypes["target"]
 
     def GetActions(self):
         return self.actions
-    
-    def SetState(self, state, worldGrid, gridSize, stateTypes):
-        stateType = self.CheckState(state, worldGrid, gridSize, stateTypes)
-
-        if stateType == self.stateTypes["unvisited"]:
-            self.state == state
-        else:
-            print("Error: Invalid state, state not set")

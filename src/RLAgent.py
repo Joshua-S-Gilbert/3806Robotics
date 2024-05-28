@@ -52,10 +52,7 @@ class RLAgent:
         # maybe add stopping condition to avoid overfitting to a specific map???
         for i in range(maxIterations):
             # Safely setting init state (maybe change in future)
-            self.robotController.SetState(self.environment.startingPos, 
-                                          self.environment.worldGrid, 
-                                          self.environment.gridSize, 
-                                          self.environment.stateTypes)
+            self.robotController.state = self.environment.startingPos
             state = self.robotController.GetCurrentState()
 
             # Choose exploit action or an explore action
@@ -96,10 +93,7 @@ class RLAgent:
         return path, rewardTrace, pathLengthTrace
 
     def Test(self, maxSteps=1000):
-        self.robotController.SetState(self.environment.startingPos, 
-                                      self.environment.worldGrid, 
-                                      self.environment.gridSize, 
-                                      self.environment.stateTypes)
+        self.robotController.state = self.environment.startingPos
         state = self.robotController.GetCurrentState()
         # run greedy from final qTable
         actionNumber = np.argmax(self.qTable[state[0], state[1], :])
