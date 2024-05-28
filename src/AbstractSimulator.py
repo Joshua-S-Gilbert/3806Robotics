@@ -6,6 +6,10 @@ class AbstractSimulator(ABC):
         self.modelName = modelName
         
     @abstractmethod
+    def RunSimulation():
+        pass
+
+    @abstractmethod
     def SetPos(self, x, y):
         pass
 
