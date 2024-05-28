@@ -2,12 +2,12 @@ import rospy
 from gazebo_msgs.srv import SetModelState, GetModelState
 from gazebo_msgs.msg import ModelState
 import tf
-import AbstractSimulator
+from AbstractSimulator import AbstractSimulator
 import tf.transformations
 import time
 
 
-class GazeboBot(AbstractSimulator.AbstractSimulator):
+class GazeboBot(AbstractSimulator):
     def __init__(self, modelName, movementDelay=1):
         self.modelName=modelName
         self.movementDelay = movementDelay
