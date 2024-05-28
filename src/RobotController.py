@@ -12,7 +12,7 @@ class RobotController:
         self.right = np.asarray([0,1])
         self.up = np.asarray([1,0])
         self.down = np.asarray([-1,0])
-        self.actions = [self.left, self.right, self.up, self.down]
+        self.actions = np.asarray([self.left, self.right, self.up, self.down])
 
         # Defining rewards
         self.rewardStep = -1
