@@ -39,8 +39,6 @@ class Environment:
                             
             if self.generateGrid:
                 self.GenerateGrid()
-                self.generateGrid = False
-                self.WriteWorld(fileName)
 
         except FileNotFoundError:
             print(f"Error: Configuration file {fileName} not found")
