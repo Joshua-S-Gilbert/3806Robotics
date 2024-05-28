@@ -36,9 +36,9 @@ class CentralServer:
             for agent in len(self.AgentsList):
                 self.timers[agent].Start()
                 path, rewardTrace, pathLengthTrace = self.AgentsList[agent].RunTraining()
-                if (printResults):
-                    print(f"agent: {5} path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
                 self.timers[agent].Stop()
+                if (printResults):
+                    print(f"agent: {5} time: {self.timers[agent].GetDuration}\t path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
 
                 self.localQTables = np.append(self.localQTables, self.AgentsList[agent].qTable)
             self.AggregateQTables()
