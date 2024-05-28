@@ -5,7 +5,10 @@ import random
 class Environment:
     def __init__(self, fileName):
         #map data
-        self.stateTypes = {"unvisited":"O","obstacle":"B","target":"G","invalid":"N"}
+        self.stateTypes = {"unvisited":"O",
+                           "obstacle":"B",
+                           "target":"G",
+                           "invalid":"N"}
         self.numberObstacles = 0
         self.numberTargets = 1
         self.gridSize = [8,8]
@@ -89,11 +92,11 @@ class Environment:
 
     def WriteWorld(self, fileName):
         with open(fileName, "w") as file:
-            file.write(f"unvisited {self.stateTypes["unvisited"]}")
-            file.write(f"obstacle {self.stateTypes["obstacle"]}")
+            file.write(f"unvisited {self.stateTypes['unvisited']}")
+            file.write(f"obstacle {self.stateTypes['obstacle']}")
             file.write(f"numberObstacles {self.numberObstacles}")
-            file.write(f"target {self.stateTypes["target"]}")
-            file.write(f"invalid {self.stateTypes["invalid"]}")
+            file.write(f"target {self.stateTypes['target']}")
+            file.write(f"invalid {self.stateTypes['invalid']}")
             file.write(f"numberTargets {self.numberTargets}")
             file.write(f"gridSize {self.gridSize[0]},{self.gridSize[1]}")
             file.write(f"startingPos {self.startingPos[0]},{self.startingPos[1]}")
