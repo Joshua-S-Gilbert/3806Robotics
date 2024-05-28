@@ -3,7 +3,7 @@ import numpy as np
 import Environment
 
 class RobotController:
-    def __init__(self, initState, worldGrid, gridSize, stateTypes):
+    def __init__(self, initState, worldGrid, stateTypes):
         # Initializing State
         self.state = initState
 
@@ -20,7 +20,7 @@ class RobotController:
         self.rewardGoal = 30
 
         # Finding Goal(s)
-        self.goalPositions = FindGoalLocations()
+        self.goalPositions = self.FindGoalLocations(worldGrid, stateTypes)
 
     def FindGoalLocations(self, worldGrid, stateTypes):
         foundGoals = np.where(worldGrid == stateTypes["target"])
@@ -29,7 +29,7 @@ class RobotController:
             goalPositions.append([foundGoals[0][i], foundGoals[1][i]])
         return goalPositions
 
-    def GetCurrentState():
+    def GetCurrentState(self):
         return self.state
 
     def CheckState(self, state, worldGrid, gridSize, stateTypes):
@@ -39,7 +39,7 @@ class RobotController:
                state[0] >= gridSize[0] or state[1] >= gridSize[1]):
                return stateTypes["invalid"] # state not inside grid
             return worldGrid[state]
-        else
+        else:
             print("Warning: Invalid state" + str(state))
             return stateTypes["invalid"] # State not valid
 
@@ -47,17 +47,25 @@ class RobotController:
         nextState = self.state + self.actions[actionNumber]
         nextStateType = self.CheckState(nextState, worldGrid, gridSize, stateTypes)
 
-        if nextStateType = stateTypes["blocked"] or nextStateType = stateTypes["invalid"]:
+        if nextStateType == stateTypes["obstacle"] or nextStateType == stateTypes["invalid"]:
             return self.rewardPunish
-        elif nextStateType = stateTypes["target"]:
+        elif nextStateType == stateTypes["target"]:
             self.state = nextState
             return self.rewardGoal
         else: # if unvisited
             self.state = nextState
             return self.rewardStep
 
-    def IsGoal(self):
+    def IsGoal(self, worldGrid, gridSize, stateTypes):
         return self.checkState(self.state, worldGrid, gridSize, stateTypes) == stateTypes
 
     def GetActions(self):
         return self.actions
+    
+    def SetState(self, state, worldGrid, gridSize, stateTypes):
+        stateType = self.CheckState(state, worldGrid, gridSize, stateTypes)
+
+        if stateType == self.stateTypes["unvisited"]:
+            self.state == state
+        else:
+            print("Error: Invalid state, state not set")
