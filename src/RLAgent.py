@@ -1,6 +1,6 @@
 import numpy as np
-import Environment
-import RobotController
+from Environment import Environment
+from RobotController import RobotController
 
 class RLAgent:
     """

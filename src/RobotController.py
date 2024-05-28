@@ -1,6 +1,5 @@
 import collections.abc as collections
 import numpy as np
-import Environment
 
 class RobotController:
     def __init__(self, initState, worldGrid, stateTypes):
