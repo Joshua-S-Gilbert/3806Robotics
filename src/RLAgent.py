@@ -29,8 +29,9 @@ class RLAgent:
         
     def RunTraining(self):
         ## maybe optimise alpha and epsilon here in future
-        self.Train(gamma=0.99, alpha=0.1, epsilon=0.1, maxIteratons=1000, maxSteps=1000)
-
+        path, rewardTrace, pathLengthTrace = self.Train(gamma=0.99, alpha=0.1, epsilon=0.1, maxIteratons=1000, maxSteps=1000)
+        return path, rewardTrace, pathLengthTrace
+    
     def Train(self, gamma=0.99, 
               alpha=0.1, epsilon=0.1,
               maxIterations=1000, maxSteps=1000):
@@ -111,6 +112,7 @@ class RLAgent:
                                             self.environment.stateTypes):
                 break
             actionNumber = nextActionNumber
+        return path
 
     def WritePath(self, path, fileName):
         with open(fileName, "w") as file:
