@@ -1,6 +1,4 @@
-import collections.abc as collections
 import numpy as np
-import matplotlib.pyplot as plt
 import Environment
 import RobotController
 
@@ -27,16 +25,15 @@ class RLAgent:
         if np.random.rand() < epsilon:
             return np.random.randint(self.robotController.actions.size)
         else:
-            return self.greedy(self.state)
+            return self.Greedy()
         
-    def RunTraining(self, initState):
+    def RunTraining(self):
         ## maybe optimise alpha and epsilon here in future
         self.Train(gamma=0.99, alpha=0.1, epsilon=0.1, maxIteratons=1000, maxSteps=1000)
 
-    def Train(self, initState, 
-              gamma=0.99, alpha=0.1, 
-              epsilon=0.1, maxIterations=1000, 
-              maxSteps=1000):
+    def Train(self, gamma=0.99, 
+              alpha=0.1, epsilon=0.1,
+              maxIterations=1000, maxSteps=1000):
 
         """
             Function to train the agent
@@ -54,11 +51,11 @@ class RLAgent:
         # train qTable until max Iterations 
         # maybe add stopping condition to avoid overfitting to a specific map???
         for i in range(maxIterations):
-            # Safely setting init state
-            self.robotController.SetState(initState, 
-                                      self.environment.worldGrid, 
-                                      self.environment.gridSize, 
-                                      self.environment.stateTypes)
+            # Safely setting init state (maybe change in future)
+            self.robotController.SetState(self.environment.startingPos, 
+                                          self.environment.worldGrid, 
+                                          self.environment.gridSize, 
+                                          self.environment.stateTypes)
             state = self.robotController.GetCurrentState()
 
             # Choose exploit action or an explore action
@@ -98,8 +95,8 @@ class RLAgent:
             pathLengthTrace.append(step+1)
         return path, rewardTrace, pathLengthTrace
 
-    def Test(self, initState, maxSteps=1000):
-        self.robotController.SetState(initState, 
+    def Test(self, maxSteps=1000):
+        self.robotController.SetState(self.environment.startingPos, 
                                       self.environment.worldGrid, 
                                       self.environment.gridSize, 
                                       self.environment.stateTypes)
