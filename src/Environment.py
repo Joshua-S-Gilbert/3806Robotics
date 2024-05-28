@@ -28,9 +28,8 @@ class Environment:
                     gridlength = 0
                     self.worldGrid = np.zeros((self.gridSize[0], self.gridSize[1]), dtype=str)
                     for i in range(numVars, len(lines)):
-                        self.worldGrid.append([])
                         for j in range(len(lines[i])):
-                            self.worldGrid[i][j].append(lines[i][j])
+                            self.worldGrid[i][j]=lines[i][j]
                         gridlength+=1
                             
             if self.generateGrid:
