@@ -31,11 +31,11 @@ class Environment:
                         print(f"Error: couldn't find attribute: {prop}")
                 if not self.generateGrid:
                     gridlength = 0
-                    self.worldGrid = []
+                    self.worldGrid = np.zeros((self.gridSize[0], self.gridSize[1]), dtype=str)
                     for i in range(9, len(lines)):
                         self.worldGrid.append([])
-                        for char in lines[i]:
-                            self.worldGrid[gridlength].append(char)
+                        for j in range(len(lines[i])):
+                            self.worldGrid[i][j].append(lines[i][j])
                         gridlength+=1
                             
             if self.generateGrid:
@@ -69,7 +69,7 @@ class Environment:
             return value
 
     def GenerateGrid(self):
-        self.worldGrid = [["O" for j in range(self.gridSize[1])] for i in range(self.gridSize[0])]
+        self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), fill_value="O", dtype=str)
         self.PlaceItems(self.obstacle, self.numberObstacles)
         self.PlaceItems(self.obstacle, self.numberTargets)
     
