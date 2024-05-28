@@ -2,6 +2,7 @@ import collections.abc as collections
 import numpy as np
 import matplotlib.pyplot as plt
 import Environment
+import RobotController
 
 class RLAgent:
     """
@@ -11,6 +12,7 @@ class RLAgent:
     """
     def __init__(self, environment)
         self.environment = environment
+        self.robotController = RobotController(self.environment.startingPos)
         self.size = environment.GetSize()
         self.numActions = len(environment.GetActions())
         self.qTable = np.zeros((self.size[0], self.size[1], self.numActions))
