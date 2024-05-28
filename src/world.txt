@@ -1,8 +1,9 @@
-Unvisited O
-Visited V
-Scanned S
-Obstacle B
-Target G
-Numtargets 1
-
-worldgrid
+unvisited O
+visited V
+obstacle B
+numberObstacles 4
+target G
+numberTargets 1
+gridSize 8,8
+startingPos 1,0
+generateGrid True
