@@ -10,7 +10,7 @@ class RLAgent:
         to train the agent to find a path
 
     """
-    def __init__(self, environment)
+    def __init__(self, environment:Environment):
         self.environment = environment
         self.robotController = RobotController(self.environment.startingPos,
                                                self.environment.worldGrid, 
@@ -28,8 +28,12 @@ class RLAgent:
             return np.random.randint(self.robotController.actions.size)
         else:
             return self.greedy(self.state)
+        
+    def RunTraining(self, initState):
+        ## maybe optimise alpha and epsilon here in future
+        self.Train(gamma=0.99, alpha=0.1, epsilon=0.1, maxIteratons=1000, maxSteps=1000)
 
-    def Train(self, startingPosition, 
+    def Train(self, initState, 
               gamma=0.99, alpha=0.1, 
               epsilon=0.1, maxIterations=1000, 
               maxSteps=1000):
@@ -42,12 +46,82 @@ class RLAgent:
 
         # Set Q values for obstacle to infinity
         #self.qTable[...] = 0
-        self.qTable[self.environment.worldGrid == 'B'] = -np.inf
+        self.qTable[self.environment.worldGrid == self.environment.stateTypes["obstacle"]] = -np.inf
 
-        rewardTrace = []
-        pathLengthTrace = []
+        rewardTrace = np.empty()
+        pathLengthTrace = np.empty()
 
+        # train qTable until max Iterations 
+        # maybe add stopping condition to avoid overfitting to a specific map???
         for i in range(maxIterations):
-            # may change environment to robot...
-            self.environment.init(startingPosition)
-            self.environment.GetCurrentState()
+            # Safely setting init state
+            self.robotController.SetState(initState, 
+                                      self.environment.worldGrid, 
+                                      self.environment.gridSize, 
+                                      self.environment.stateTypes)
+            state = self.robotController.GetCurrentState()
+
+            # Choose exploit action or an explore action
+            actionNumber = self.EpsilonGreed(epsilon)
+
+            rewards = np.empty()
+            path = np.array(state)
+
+            # pathfind until goal or maxSteps
+            for step in range(maxSteps):
+                # apply action
+                reward = self.robotController.GetActionValue(actionNumber,
+                                                             self.environment.worldGrid, 
+                                                             self.environment.gridSize, 
+                                                             self.environment.stateTypes)
+                nextState = self.robotController.GetCurrentState()
+                nextActionNumber = self.EpsilonGreed(epsilon)
+
+                rewards.append(reward)
+                path = np.vstack((path, nextState))
+
+                # add new qValue to respective qValue in qTable
+                self.qTable[state[0], state[1], actionNumber] += (
+                    alpha * (reward * gamma * np.max(self.qTable[nextState[0], nextState[1], :]) - self.qTable[state[0], state[1], actionNumber])
+                )
+
+                if self.robotController.IsGoal(self.environment.worldGrid, 
+                                               self.environment.gridSize, 
+                                               self.environment.stateTypes):
+                    self.qTable[nextState[0], nextState[1], nextActionNumber] = 0
+                    break
+
+                state = nextState
+                actionNumber = nextActionNumber
+            
+            rewardTrace.append(np.sum(rewards))
+            pathLengthTrace.append(step+1)
+        return path, rewardTrace, pathLengthTrace
+
+    def Test(self, initState, maxSteps=1000):
+        self.robotController.SetState(initState, 
+                                      self.environment.worldGrid, 
+                                      self.environment.gridSize, 
+                                      self.environment.stateTypes)
+        state = self.robotController.GetCurrentState()
+        # run greedy from final qTable
+        actionNumber = np.argmax(self.qTable[state[0], state[1], :])
+        path = np.array(state)
+        for step in range(maxSteps):
+            self.robotController.GetActionValue(actionNumber,
+                                                self.environment.worldGrid,
+                                                self.environment.gridSize,
+                                                self.environment.stateTypes)
+            nextState = self.robotController.GetCurrentState()
+            nextActionNumber = np.argmax(self.qTable[nextState[0], nextState[1], :])
+            path = np.vstack((path, nextState))
+            if self.robotController.IsGoal(self.environment.worldGrid,
+                                            self.environment.gridSize,
+                                            self.environment.stateTypes):
+                break
+            actionNumber = nextActionNumber
+
+    def WritePath(self, path, fileName):
+        with open(fileName, "w") as file:
+            for step in path:
+                file.write(f"{step[0]},{step[1]}")
