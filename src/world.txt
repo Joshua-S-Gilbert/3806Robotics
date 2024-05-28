@@ -1,0 +1,8 @@
+Unvisited O
+Visited V
+Scanned S
+Obstacle B
+Target G
+Numtargets 1
+
+worldgrid
