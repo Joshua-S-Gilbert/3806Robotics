@@ -1,7 +1,7 @@
 import numpy as np
-import Environment
-import RobotController
-import RLAgent
+from Environment import Environment
+from RobotController import RobotController
+from RLAgent import RLAgent
 import time
 
 class Timer:
