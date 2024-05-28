@@ -12,24 +12,27 @@ class RLAgent:
     """
     def __init__(self, environment)
         self.environment = environment
-        self.robotController = RobotController(self.environment.startingPos)
-        self.size = environment.GetSize()
-        self.numActions = len(environment.GetActions())
-        self.qTable = np.zeros((self.size[0], self.size[1], self.numActions))
+        self.robotController = RobotController(self.environment.startingPos,
+                                               self.environment.worldGrid, 
+                                               self.environment.gridSize, 
+                                               self.environment.stateTypes)
+        self.qTable = np.zeros((self.environment.gridSize[0],
+                                self.environment.gridSize[1], 
+                                self.robotController.actions.size))
 
-    def Greedy(self, state):
-        return np.argmax(self.qTable[state[0], state[1]])
+    def Greedy(self):
+        return np.argmax(self.qTable[self.robotController.state[0], self.robotController.state[1]])
 
-    def EpsilonGreed(self, epsilon, state):
-        if np.random.rand() < e:
-            return np.random.randint(self.numActions)
+    def EpsilonGreed(self, epsilon):
+        if np.random.rand() < epsilon:
+            return np.random.randint(self.robotController.actions.size)
         else:
-            return self.greedy(state)
+            return self.greedy(self.state)
 
-    def Train(self, state, 
-            startingPosition, gamma=0.99, 
-            alpha=0.1, epsilon=0.1, 
-            maxIterations=1000, maxSteps=1000):
+    def Train(self, startingPosition, 
+              gamma=0.99, alpha=0.1, 
+              epsilon=0.1, maxIterations=1000, 
+              maxSteps=1000):
 
         """
             Function to train the agent
