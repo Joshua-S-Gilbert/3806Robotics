@@ -8,7 +8,7 @@ class Environment:
         self.unvisited = "O"
         self.visited = "V"
         self.obstacle = "B"
-        self.numberObstacles = 4
+        self.numberObstacles = 0
         self.target = "G"
         self.numberTargets = 1
         self.gridSize = [8,8]
@@ -17,7 +17,7 @@ class Environment:
         self.worldGrid = []
 
         self.ReadFile(fileName)
-    
+
     def ReadFile(self, fileName):
         try:
             with open(fileName, "r") as file:
@@ -40,14 +40,14 @@ class Environment:
                             
             if self.generateGrid:
                 self.GenerateGrid()
-                self.WriteWorld(fileName)
                 self.generateGrid = False
+                self.WriteWorld(fileName)
 
         except FileNotFoundError:
             print(f"Error: Configuration file {fileName} not found")
         except Exception as error:
             print(f"Error: error occured loading config file: {error}")
-    
+
     @staticmethod
     def ConvertValue(value=""):
         if value.find(",") != -1:
