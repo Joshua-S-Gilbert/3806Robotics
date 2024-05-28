@@ -1,5 +1,6 @@
 import numpy as np
 import Environment
+import RobotController
 import RLAgent
 import time
 
@@ -21,8 +22,8 @@ class Timer:
 
 class CentralServer:
     def __init__(self, numAgents, fileName="world.txt"):
-        self.env = Environment(fileName)
-        self.globalQTable = np.zeros((self.env.gridSize[0], self.env.gridSize[1]))
+        self.environment = Environment(fileName)
+        self.globalQTable = np.empty()
         self.localQTables = np.empty()
         self.AgentsList = [RLAgent(Environment(fileName)) for x in range(numAgents)]
         self.timers = [Timer() for x in range(numAgents)]
@@ -30,15 +31,30 @@ class CentralServer:
     def AggregateQTables(self):
         self.globalQTable = np.mean(self.localQTables, axis=0)
     
-    def RunAgents(self):
-        for agent in len(self.AgentsList):
-            self.timers[agent].Start()
-            self.AgentsList[agent].Train()
-            self.timers[agent].Stop()
-            self.localQTables = np.append(self.localQTables, self.AgentsList[agent].qTable)
-        self.AggregateQTables()
+    def RunAgents(self, batches=5, printResults=False):
+        for i in range(batches):
+            for agent in len(self.AgentsList):
+                self.timers[agent].Start()
+                path, rewardTrace, pathLengthTrace = self.AgentsList[agent].RunTraining()
+                if (printResults):
+                    print(f"agent: {5} path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
+                self.timers[agent].Stop()
+
+                self.localQTables = np.append(self.localQTables, self.AgentsList[agent].qTable)
+            self.AggregateQTables()
+            self.UpdateAgents()
     
     def UpdateAgents(self):
+        if (self.globalQTable == np.empty()):
+            print("Error: central server global q table is empty")
+            return
         for agent in self.AgentsList:
             agent.qTable = self.globalQTable
+
+    def RunTest(self, worldFileName="world.txt", resultsFileName="results.txt"):
+        agent = RLAgent(Environment(worldFileName))
+        agent.qTable = self.globalQTable
+        path = agent.Test()
+        agent.WritePath(path, resultsFileName)
+    
 
