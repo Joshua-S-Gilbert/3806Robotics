@@ -1,5 +1,4 @@
 unvisited O
-visited V
 obstacle B
 numberObstacles 4
 target G

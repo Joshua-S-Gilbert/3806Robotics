@@ -6,7 +6,6 @@ class Environment:
     def __init__(self, fileName):
         #map data
         self.unvisited = "O"
-        self.visited = "V"
         self.obstacle = "B"
         self.numberObstacles = 0
         self.target = "G"
@@ -22,7 +21,7 @@ class Environment:
         try:
             with open(fileName, "r") as file:
                 lines = file.readlines()
-                for i in range(9):
+                for i in range(8):
                     # prop meants property. there is a default method called property
                     prop, value = lines[i].strip().split()
                     if (hasattr(self, prop)):
@@ -85,7 +84,6 @@ class Environment:
     def WriteWorld(self, fileName):
         with open(fileName, "w") as file:
             file.write(f"unvisited {self.unvisited}")
-            file.write(f"visited {self.visited}")
             file.write(f"obstacle {self.obstacle}")
             file.write(f"numberObstacles {self.numberObstacles}")
             file.write(f"target {self.target}")
