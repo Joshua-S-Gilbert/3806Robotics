@@ -77,7 +77,7 @@ class RLAgent:
 
                 # add new qValue to respective qValue in qTable
                 self.qTable[state[0], state[1], actionNumber] += (
-                    alpha * (reward * gamma * np.max(self.qTable[nextState[0], nextState[1]]) - self.qTable[state[0], state[1], actionNumber])
+                    alpha * (reward + gamma * np.max(self.qTable[nextState[0], nextState[1]]) - self.qTable[state[0], state[1], actionNumber])
                 )
 
                 if self.robotController.IsGoal(self.environment.worldGrid, 
