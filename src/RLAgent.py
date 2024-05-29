@@ -53,8 +53,8 @@ class RLAgent:
         # maybe add stopping condition to avoid overfitting to a specific map???
         for i in range(maxIterations):
             # Safely setting init state (maybe change in future)
-            self.robotController.state = self.environment.startingPos
-            state = self.robotController.GetCurrentState()
+            self.robotController.state = self.CopyState(self.environment.startingPos)
+            state = self.CopyState(self.robotController.state)
 
             # Choose exploit action or an explore action
             actionNumber = self.EpsilonGreed(epsilon)
@@ -69,7 +69,7 @@ class RLAgent:
                                                              self.environment.worldGrid, 
                                                              self.environment.gridSize, 
                                                              self.environment.stateTypes)
-                nextState = self.robotController.GetCurrentState()
+                nextState = self.CopyState(self.robotController.state)
                 nextActionNumber = self.EpsilonGreed(epsilon)
 
                 rewards += reward
@@ -94,8 +94,8 @@ class RLAgent:
         return path, rewardTrace, pathLengthTrace
 
     def Test(self, maxSteps=1000):
-        self.robotController.state = self.environment.startingPos
-        state = self.robotController.GetCurrentState()
+        self.robotController.state = self.CopyState(self.environment.startingPos)
+        state = self.CopyState(self.robotController.state)
         # run greedy from final qTable
         actionNumber = np.argmax(self.qTable[state[0], state[1]])
         path = np.array(state)
@@ -104,7 +104,7 @@ class RLAgent:
                                                 self.environment.worldGrid,
                                                 self.environment.gridSize,
                                                 self.environment.stateTypes)
-            nextState = self.robotController.GetCurrentState()
+            nextState = self.CopyState(self.robotController.state)
             nextActionNumber = np.argmax(self.qTable[nextState[0], nextState[1]])
             path = np.vstack((path, nextState))
             if self.robotController.IsGoal(self.environment.worldGrid,
@@ -118,3 +118,6 @@ class RLAgent:
         with open(fileName, "w") as file:
             for step in path:
                 file.write(f"{step[0]},{step[1]}\n")
+
+    def CopyState(originalState):
+        return np.asarray(originalState[0], originalState[1])
