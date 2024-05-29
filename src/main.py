@@ -1,5 +1,6 @@
 from CentralServer import CentralServer
 from GazeboBot import GazeboBot
+import numpy as np
 
 
 def main():
@@ -8,7 +9,7 @@ def main():
     server = CentralServer(1, worldFile)
     server.agentsList[0].environment.WriteWorld(resultsFile)
     server.RunAgents(batches = 1, printResults=True)
-    # server.RunTest(worldFile, resultsFile)
+    server.RunTest(worldFile, resultsFile)
 
 if __name__ == "__main__":
     main()
