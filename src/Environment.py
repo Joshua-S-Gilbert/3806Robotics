@@ -67,7 +67,7 @@ class Environment:
 
     def GenerateGrid(self):
         self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), fill_value="O", dtype=str)
-        self.PlaceItems(self.stateTypes["obstacle"], self.numberObstacles)
+        self.NewObstaclePos()
         self.PlaceItems(self.stateTypes["target"], self.numberTargets)
         self.NewStartingPos()
 
@@ -79,6 +79,9 @@ class Environment:
             if (self.worldGrid[row][col] == self.stateTypes["unvisited"]):
                 self.worldGrid[row][col] = item
                 placedCount += 1
+    
+    def NewObstaclePos(self):
+        self.PlaceItems(self.stateTypes["obstacle"], self.numberObstacles)
     
     def NewStartingPos(self):
         FoundStartingPosition = False

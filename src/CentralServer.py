@@ -54,17 +54,38 @@ class CentralServer:
         print(f"Time Taken: {self.timers.GetDuration()}")
     
     def SaveGlobalTable(self, fileName="globalQTable.txt"):
-        np.savetxt(fileName, self.globalQTable)
+        with open(fileName, 'w') as f:
+            shape = np.shape(self.globalQTable)
+            f.write(f"{shape[0]} {shape[1]} {shape[2]}\n")
+            flatArray = self.globalQTable.flatten()
+            for item in flatArray:
+                f.write(f"{item}\n")
 
+    def LoadGlobalTable(self, fileName="globalQTable.txt"):
+        with open(fileName, 'r') as f:
+            shape = tuple(map(int, f.readline().strip().split()))
+            flatArray = []
+            for line in f:
+                flatArray.append(float(line.strip()))
+            self.globalQTable = np.array(flatArray).reshape(shape)
+    
     def SaveAllTables(self, fileName="allTables.txt"):
         temp = np.asarray(self.localQTables)
-        np.savetxt(fileName, temp)
-    
-    def LoadGlobalTable(self, fileName="globalQTable.txt"):
-        self.globalQTable = np.loadtxt(fileName)
+        with open(fileName, 'w') as f:
+            shape = np.shape(temp)
+            f.write(f"{shape[0]} {shape[1]} {shape[2]} {shape[3]}\n")
+            flatArray = temp.flatten()
+            for item in flatArray:
+                f.write(f"{item}\n")
 
     def LoadAllTables(self, fileName="allTables.txt"):
-        self.localQTables = list(np.loadtxt(fileName))
+        with open(fileName, 'r') as f:
+            shape = tuple(map(int, f.readline().strip().split()))
+            flatArray = []
+            for line in f:
+                flatArray.append(float(line.strip()))
+            temp = np.array(flatArray).reshape(shape)
+            self.localQTables = temp.tolist()
 
     def UpdateAgents(self):
         if (self.globalQTable is None):

@@ -10,7 +10,7 @@ def main():
     resultsFile = "results.txt"
     allTables = "allTables.txt"
     globalFile = "globalQTables.txt"
-    server = CentralServer(5, worldFile)
+    server = CentralServer(20, worldFile)
 
     if (os.path.exists(f"./{globalFile}")):
         server.LoadGlobalTable(globalFile)
