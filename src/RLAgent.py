@@ -46,8 +46,8 @@ class RLAgent:
         #self.qTable[...] = 0
         self.qTable[self.environment.worldGrid == self.environment.stateTypes["obstacle"]] = -np.inf
 
-        rewardTrace = np.empty()
-        pathLengthTrace = np.empty()
+        rewardTrace = []
+        pathLengthTrace = []
 
         # train qTable until max Iterations 
         # maybe add stopping condition to avoid overfitting to a specific map???
@@ -59,7 +59,7 @@ class RLAgent:
             # Choose exploit action or an explore action
             actionNumber = self.EpsilonGreed(epsilon)
 
-            rewards = np.empty()
+            rewards = 0
             path = np.array(state)
 
             # pathfind until goal or maxSteps
@@ -72,7 +72,7 @@ class RLAgent:
                 nextState = self.robotController.GetCurrentState()
                 nextActionNumber = self.EpsilonGreed(epsilon)
 
-                rewards.append(reward)
+                rewards += reward
                 path = np.vstack((path, nextState))
 
                 # add new qValue to respective qValue in qTable
@@ -89,7 +89,7 @@ class RLAgent:
                 state = nextState
                 actionNumber = nextActionNumber
             
-            rewardTrace.append(np.sum(rewards))
+            rewardTrace.append(rewards)
             pathLengthTrace.append(step+1)
         return path, rewardTrace, pathLengthTrace
 
