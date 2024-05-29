@@ -9,8 +9,8 @@ class RobotController:
         # Initializing Actions
         self.left = np.asarray([0,-1])
         self.right = np.asarray([0,1])
-        self.up = np.asarray([1,0])
-        self.down = np.asarray([-1,0])
+        self.up = np.asarray([-1,0])
+        self.down = np.asarray([1,0])
         self.actions = np.asarray([self.left, self.right, self.up, self.down])
 
         # Defining rewards

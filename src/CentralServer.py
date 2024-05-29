@@ -23,13 +23,17 @@ class Timer:
 class CentralServer:
     def __init__(self, numAgents, fileName="world.txt"):
         self.environment = Environment(fileName)
+        self.robotController = RobotController(self.environment.startingPos,
+                                               self.environment.worldGrid,
+                                               self.environment.stateTypes)
         self.globalQTable = None
-        self.localQTables = None
+        self.localQTables = []
         self.agentsList = [RLAgent(Environment(fileName)) for x in range(numAgents)]
         self.timers = [Timer() for x in range(numAgents)]
 
     def AggregateQTables(self):
-        self.globalQTable = np.mean([self.localQTables], axis=0)
+        self.globalQTable = np.mean(self.localQTables, axis=0)
+        print(self.globalQTable)
     
     def RunAgents(self, batches=5, printResults=False):
         for i in range(batches):
@@ -39,10 +43,7 @@ class CentralServer:
                 self.timers[agent].Stop()
                 if (printResults):
                     print(f"agent: {agent} time: {self.timers[agent].GetDuration()}\t path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
-                if self.localQTables is None:
-                    self.localQTables = self.agentsList[agent].qTable
-                else:
-                    self.localQTables = np.append(self.localQTables, self.agentsList[agent].qTable)
+                self.localQTables.append(self.agentsList[agent].qTable)
             self.AggregateQTables()
             self.UpdateAgents()
     

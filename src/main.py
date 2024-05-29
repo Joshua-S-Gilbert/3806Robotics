@@ -7,8 +7,8 @@ def main():
     worldFile = "world.txt"
     testFile = "agentWorld.txt"
     resultsFile = "results.txt"
-    server = CentralServer(1, worldFile)
-    server.RunAgents(batches = 1, printResults=True)
+    server = CentralServer(5, worldFile)
+    server.RunAgents(batches = 1, printResults=False)
     server.agentsList[0].environment.WriteWorld(testFile)
     server.RunTest(worldFile, resultsFile)
     
