@@ -43,7 +43,7 @@ class RLAgent:
 
         # Set Q values for obstacle to infinity
         #self.qTable[...] = 0
-        self.qTable[self.environment.worldGrid == self.environment.stateTypes["obstacle"]] = -np.inf
+        self.qTable[self.environment.worldGrid == self.environment.stateTypes["obstacle"]] = -100000
 
         rewardTrace = []
         pathLengthTrace = []
