@@ -41,7 +41,11 @@ class CentralServer:
                 path, rewardTrace, pathLengthTrace = self.agentsList[agent].RunTraining()
                 if (printResults and agent == 0):
                     print(f"agent: {agent} path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
-                self.localQTables.append(self.agentsList[agent].qTable)
+                agentTable = np.copy(self.agentsList[agent].qTable)
+                obstacleIndices = np.where(agentTable == -100000)
+                for i in range(len(obstacleIndices[0])):
+                    agentTable[obstacleIndices[0][i]][obstacleIndices[1][i]][obstacleIndices[2][i]] = 0
+                self.localQTables.append(agentTable)
             self.AggregateQTables()
             self.UpdateAgents()
         self.timers.Stop()
@@ -49,6 +53,19 @@ class CentralServer:
             print(self.globalQTable)
         print(f"Time Taken: {self.timers.GetDuration()}")
     
+    def SaveGlobalTable(self, fileName="globalQTable.txt"):
+        np.savetxt(fileName, self.globalQTable)
+
+    def SaveAllTables(self, fileName="allTables.txt"):
+        temp = np.asarray(self.localQTables)
+        np.savetxt(fileName, temp)
+    
+    def LoadGlobalTable(self, fileName="globalQTable.txt"):
+        self.globalQTable = np.loadtxt(fileName)
+
+    def LoadAllTables(self, fileName="allTables.txt"):
+        self.localQTables = list(np.loadtxt(fileName))
+
     def UpdateAgents(self):
         if (self.globalQTable is None):
             print("Error: central server global q table is empty")
