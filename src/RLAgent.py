@@ -77,7 +77,7 @@ class RLAgent:
 
                 # add new qValue to respective qValue in qTable
                 self.qTable[state[0], state[1], actionNumber] += (
-                    alpha * (reward * gamma * np.max(self.qTable[nextState[0], nextState[1], :]) - self.qTable[state[0], state[1], actionNumber])
+                    alpha * (reward * gamma * np.max(self.qTable[nextState[0], nextState[1]]) - self.qTable[state[0], state[1], actionNumber])
                 )
 
                 if self.robotController.IsGoal(self.environment.worldGrid, 
@@ -97,7 +97,7 @@ class RLAgent:
         self.robotController.state = self.environment.startingPos
         state = self.robotController.GetCurrentState()
         # run greedy from final qTable
-        actionNumber = np.argmax(self.qTable[state[0], state[1], :])
+        actionNumber = np.argmax(self.qTable[state[0], state[1]])
         path = np.array(state)
         for step in range(maxSteps):
             self.robotController.GetActionValue(actionNumber,
@@ -105,7 +105,7 @@ class RLAgent:
                                                 self.environment.gridSize,
                                                 self.environment.stateTypes)
             nextState = self.robotController.GetCurrentState()
-            nextActionNumber = np.argmax(self.qTable[nextState[0], nextState[1], :])
+            nextActionNumber = np.argmax(self.qTable[nextState[0], nextState[1]])
             path = np.vstack((path, nextState))
             if self.robotController.IsGoal(self.environment.worldGrid,
                                             self.environment.gridSize,
@@ -117,4 +117,4 @@ class RLAgent:
     def WritePath(self, path, fileName):
         with open(fileName, "w") as file:
             for step in path:
-                file.write(f"{step[0]},{step[1]}")
+                file.write(f"{step[0]},{step[1]}\n")
