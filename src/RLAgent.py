@@ -15,14 +15,14 @@ class RLAgent:
                                                self.environment.stateTypes)
         self.qTable = np.zeros((self.environment.gridSize[0],
                                 self.environment.gridSize[1], 
-                                self.robotController.actions.size))
+                                self.robotController.actions.shape[0]))
 
     def Greedy(self):
         return np.argmax(self.qTable[self.robotController.state[0], self.robotController.state[1]])
 
     def EpsilonGreed(self, epsilon):
         if np.random.rand() < epsilon:
-            return np.random.randint(self.robotController.actions.size)
+            return np.random.randint(self.robotController.actions.shape[0])
         else:
             return self.Greedy()
         
