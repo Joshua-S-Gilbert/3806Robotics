@@ -56,7 +56,7 @@ class RobotController:
             return self.rewardStep
 
     def IsGoal(self, worldGrid, gridSize, stateTypes):
-        return self.checkState(self.state, worldGrid, gridSize, stateTypes) == stateTypes["target"]
+        return self.CheckState(self.state, worldGrid, gridSize, stateTypes) == stateTypes["target"]
 
     def GetActions(self):
         return self.actions
