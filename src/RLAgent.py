@@ -91,6 +91,8 @@ class RLAgent:
             
             rewardTrace.append(rewards)
             pathLengthTrace.append(step+1)
+            if (i%100 == 0):
+                self.environment.NewStartingPos()
         return path, rewardTrace, pathLengthTrace
 
     def Test(self, maxSteps=1000):
@@ -112,8 +114,6 @@ class RLAgent:
                                             self.environment.stateTypes):
                 break
             actionNumber = nextActionNumber
-            self.qTable[state[0]][state[1]] = -np.inf
-            print(self.qTable)
         return path
 
     def WritePath(self, path, fileName):
