@@ -39,10 +39,7 @@ class Environment:
 
         except FileNotFoundError:
             print(f"Error: Configuration file {fileName} not found")
-        except Exception as error:
-            print(f"Error: error occured loading config file: {error}")
 
-    @staticmethod
     def ConvertValue(self, prop:str, value:str):
         if value.find(",") != -1:
             tempList = []
@@ -70,13 +67,13 @@ class Environment:
 
     def GenerateGrid(self):
         self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), fill_value="O", dtype=str)
-        self.PlaceItems(self.obstacle, self.numberObstacles)
-        self.PlaceItems(self.target, self.numberTargets)
+        self.PlaceItems(self.stateTypes["obstacle"], self.numberObstacles)
+        self.PlaceItems(self.stateTypes["target"], self.numberTargets)
         FoundStartingPosition = False
         while not FoundStartingPosition:
             row = random.randint(0, self.gridSize[0]-1)
             col = random.randint(0, self.gridSize[1]-1)
-            if (self.worldGrid[row][col] == self.unvisited):
+            if (self.worldGrid[row][col] == self.stateTypes["unvisited"]):
                 self.startingPos = np.asarray([row, col])
                 FoundStartingPosition=True
 
@@ -85,7 +82,7 @@ class Environment:
         while placedCount < count:
             row = random.randint(0, self.gridSize[0]-1)
             col = random.randint(0, self.gridSize[1]-1)
-            if (self.worldGrid[row][col] == self.unvisited):
+            if (self.worldGrid[row][col] == self.stateTypes["unvisited"]):
                 self.worldGrid[row][col] = item
                 placedCount += 1
 
