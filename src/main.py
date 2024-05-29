@@ -3,7 +3,7 @@ from GazeboBot import GazeboBot
 
 
 def main():
-    server = CentralServer.CentralServer(3)
+    server = CentralServer(3)
     server.RunAgents(printResults=True)
     server.RunTest()
 
