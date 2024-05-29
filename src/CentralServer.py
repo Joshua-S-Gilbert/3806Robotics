@@ -38,7 +38,7 @@ class CentralServer:
                 path, rewardTrace, pathLengthTrace = self.agentsList[agent].RunTraining()
                 self.timers[agent].Stop()
                 if (printResults):
-                    print(f"agent: {5} time: {self.timers[agent].GetDuration()}\t path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
+                    print(f"agent: {agent} time: {self.timers[agent].GetDuration()}\t path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
                 if self.localQTables is None:
                     self.localQTables = self.agentsList[agent].qTable
                 else:
@@ -60,6 +60,7 @@ class CentralServer:
         agent = RLAgent(Environment(worldFileName))
         agent.qTable = self.globalQTable
         path = agent.Test()
+        agent.environment.WriteWorld("testWorld.txt")
         agent.WritePath(path, resultsFileName)
     
 
