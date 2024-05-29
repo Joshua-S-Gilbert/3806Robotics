@@ -10,7 +10,7 @@ def main():
     server = CentralServer(1, testFile)
     server.agentsList[0].environment.WriteWorld(testFile)
     server.RunAgents(batches = 1, printResults=True)
-    server.RunTest(worldFile, resultsFile)
+    server.RunTest(testFile, resultsFile)
 
 if __name__ == "__main__":
     main()

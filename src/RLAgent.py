@@ -119,5 +119,5 @@ class RLAgent:
             for step in path:
                 file.write(f"{step[0]},{step[1]}\n")
 
-    def CopyState(originalState):
-        return np.asarray(originalState[0], originalState[1])
+    def CopyState(self, originalState):
+        return np.asarray((originalState[0], originalState[1]))
