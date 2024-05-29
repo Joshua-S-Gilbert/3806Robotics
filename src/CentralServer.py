@@ -39,7 +39,6 @@ class CentralServer:
                 self.timers[agent].Stop()
                 if (printResults):
                     print(f"agent: {5} time: {self.timers[agent].GetDuration()}\t path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
-                print(f"{self.agentsList[agent].qTable}")
                 if self.localQTables is None:
                     self.localQTables = self.agentsList[agent].qTable
                 else:
