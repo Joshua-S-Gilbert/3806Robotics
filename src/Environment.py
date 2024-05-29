@@ -69,13 +69,7 @@ class Environment:
         self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), fill_value="O", dtype=str)
         self.PlaceItems(self.stateTypes["obstacle"], self.numberObstacles)
         self.PlaceItems(self.stateTypes["target"], self.numberTargets)
-        FoundStartingPosition = False
-        while not FoundStartingPosition:
-            row = random.randint(0, self.gridSize[0]-1)
-            col = random.randint(0, self.gridSize[1]-1)
-            if (self.worldGrid[row][col] == self.stateTypes["unvisited"]):
-                self.startingPos = np.asarray([row, col])
-                FoundStartingPosition=True
+        self.NewStartingPos()
 
     def PlaceItems(self, item, count):
         placedCount = 0
@@ -85,6 +79,15 @@ class Environment:
             if (self.worldGrid[row][col] == self.stateTypes["unvisited"]):
                 self.worldGrid[row][col] = item
                 placedCount += 1
+    
+    def NewStartingPos(self):
+        FoundStartingPosition = False
+        while not FoundStartingPosition:
+            row = random.randint(0, self.gridSize[0]-1)
+            col = random.randint(0, self.gridSize[1]-1)
+            if (self.worldGrid[row][col] == self.stateTypes["unvisited"]):
+                self.startingPos = np.asarray([row, col])
+                FoundStartingPosition=True
 
     def WriteWorld(self, fileName):
         with open(fileName, "w") as file:
