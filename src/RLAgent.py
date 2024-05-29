@@ -15,7 +15,8 @@ class RLAgent:
                                                self.environment.stateTypes)
         self.qTable = np.zeros((self.environment.gridSize[0],
                                 self.environment.gridSize[1], 
-                                self.robotController.actions.shape[0]))
+                                self.robotController.actions.shape[0]), 
+                                dtype=float)
 
     def Greedy(self):
         return np.argmax(self.qTable[self.robotController.state[0], self.robotController.state[1]])
