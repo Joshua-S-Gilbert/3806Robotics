@@ -27,12 +27,12 @@ class Environment:
                     prop, value = lines[i].strip().split()
                     self.ConvertValue(prop, value)
                 if not self.generateGrid:
-                    gridlength = 0
                     self.worldGrid = np.zeros((self.gridSize[0], self.gridSize[1]), dtype=str)
+                    gridLength = 0
                     for i in range(numVars, len(lines)):
-                        for j in range(len(lines[i])):
-                            self.worldGrid[i][j]=lines[i][j]
-                        gridlength+=1
+                        for j in range(self.gridSize[1]):
+                            self.worldGrid[gridLength][j]=lines[i][j]
+                        gridLength += 1
                             
             if self.generateGrid:
                 self.GenerateGrid()
