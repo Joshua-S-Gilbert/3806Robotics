@@ -12,7 +12,6 @@ class RLAgent:
         self.environment = environment
         self.robotController = RobotController(self.environment.startingPos,
                                                self.environment.worldGrid, 
-                                               self.environment.gridSize, 
                                                self.environment.stateTypes)
         self.qTable = np.zeros((self.environment.gridSize[0],
                                 self.environment.gridSize[1], 
