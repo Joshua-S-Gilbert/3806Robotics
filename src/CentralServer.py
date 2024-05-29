@@ -25,7 +25,7 @@ class CentralServer:
         self.environment = Environment(fileName)
         self.globalQTable = None
         self.localQTables = None
-        self.AgentsList = [RLAgent(Environment(fileName)) for x in range(numAgents)]
+        self.agentsList = [RLAgent(Environment(fileName)) for x in range(numAgents)]
         self.timers = [Timer() for x in range(numAgents)]
 
     def AggregateQTables(self):
@@ -33,16 +33,16 @@ class CentralServer:
     
     def RunAgents(self, batches=5, printResults=False):
         for i in range(batches):
-            for agent in len(self.AgentsList):
+            for agent in range(len(self.agentsList)):
                 self.timers[agent].Start()
-                path, rewardTrace, pathLengthTrace = self.AgentsList[agent].RunTraining()
+                path, rewardTrace, pathLengthTrace = self.agentsList[agent].RunTraining()
                 self.timers[agent].Stop()
                 if (printResults):
                     print(f"agent: {5} time: {self.timers[agent].GetDuration}\t path: {path}\nreward trace: {rewardTrace}\npath length trace: {pathLengthTrace}")
                 if (self.localQTables == None):
-                    self.localQTables = self.AgentsList[agent].qTable
+                    self.localQTables = self.agentsList[agent].qTable
                     continue
-                self.localQTables = np.append(self.localQTables, self.AgentsList[agent].qTable)
+                self.localQTables = np.append(self.localQTables, self.agentsList[agent].qTable)
             self.AggregateQTables()
             self.UpdateAgents()
     
@@ -50,7 +50,7 @@ class CentralServer:
         if (self.globalQTable == None):
             print("Error: central server global q table is empty")
             return
-        for agent in self.AgentsList:
+        for agent in self.agentsList:
             agent.qTable = self.globalQTable
 
     def RunTest(self, worldFileName="world.txt", resultsFileName="results.txt"):
