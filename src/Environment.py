@@ -88,18 +88,19 @@ class Environment:
 
     def WriteWorld(self, fileName):
         with open(fileName, "w") as file:
-            file.write(f"unvisited {self.stateTypes['unvisited']}")
-            file.write(f"obstacle {self.stateTypes['obstacle']}")
-            file.write(f"numberObstacles {self.numberObstacles}")
-            file.write(f"target {self.stateTypes['target']}")
-            file.write(f"invalid {self.stateTypes['invalid']}")
-            file.write(f"numberTargets {self.numberTargets}")
-            file.write(f"gridSize {self.gridSize[0]},{self.gridSize[1]}")
-            file.write(f"startingPos {self.startingPos[0]},{self.startingPos[1]}")
-            file.write(f"generateGrid False")
+            file.write(f"unvisited {self.stateTypes['unvisited']}\n")
+            file.write(f"obstacle {self.stateTypes['obstacle']}\n")
+            file.write(f"numberObstacles {self.numberObstacles}\n")
+            file.write(f"target {self.stateTypes['target']}\n")
+            file.write(f"invalid {self.stateTypes['invalid']}\n")
+            file.write(f"numberTargets {self.numberTargets}\n")
+            file.write(f"gridSize {self.gridSize[0]},{self.gridSize[1]}\n")
+            file.write(f"startingPos {self.startingPos[0]},{self.startingPos[1]}\n")
+            file.write(f"generateGrid False\n")
             for line in self.worldGrid:
                 tempstring = ""
                 for char in line:
                     tempstring += char
+                tempstring += "\n"
                 file.write(tempstring)
 
