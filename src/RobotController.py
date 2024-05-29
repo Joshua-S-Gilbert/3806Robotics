@@ -43,7 +43,7 @@ class RobotController:
             return stateTypes["invalid"] # State not valid
 
     def GetActionValue(self, actionNumber, worldGrid, gridSize, stateTypes):
-        nextState = self.state + self.actions[actionNumber]
+        nextState = np.asarray([self.state[0] + self.actions[actionNumber][0], self.state[1] + self.actions[actionNumber][1]])
         nextStateType = self.CheckState(nextState, worldGrid, gridSize, stateTypes)
 
         if nextStateType == stateTypes["obstacle"] or nextStateType == stateTypes["invalid"]:
