@@ -32,6 +32,7 @@ class GazeboBot(AbstractSimulator):
             for modelName in removalModelNames:
                 if modelName != "ground_plane" and modelName != "sun":  # Don't delete default models
                     self.DeleteModelService(modelName)
+            self.modelNames["robot"] = {self.modelCount["robot"] : 0, self.modelCount["obstacle"] : 0, self.modelCount["target"] : 0}
             rospy.loginfo("Cleared all models from Gazebo world.")
         except rospy.ServiceException as error:
             rospy.logerr(f"Service call failed: {error}")
@@ -50,15 +51,14 @@ class GazeboBot(AbstractSimulator):
     def RobotWalkPath(self, fileName:str, robotNumber):
         with open(fileName, "r") as file:
             lines = file.readlines()
-            if robotNumber > self.modelCount[self.modelNames["robot"]]:
-                line = lines[0].strip().split(',')
-                self.SpawnRobot(float(line[0]), float(line[1]))
             for i in range(len(lines)):
                 line = lines[i].strip().split(',')
                 if robotNumber > self.modelCount[self.modelNames["robot"]] and i == 0:
-                    self.SpawnRobot()
-                self.SetPos(f"{self.modelNames["robot"]}{robotNumber}", float(line[0]), float(line[1]))
-                time.sleep(self.movementDelay)
+                    self.SpawnRobot(float(line[0]), float(line[1]))
+                    time.sleep(self.movementDelay*2)
+                else:
+                    self.SetPos(f"{self.modelNames["robot"]}{robotNumber}", float(line[0]), float(line[1]))
+                    time.sleep(self.movementDelay)
 
     def SpawnModel(self, modelName, x, y):
         modelXML = self.getModelXML(modelName)
