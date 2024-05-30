@@ -2,12 +2,12 @@ import rospy
 from gazebo_msgs.srv import SetModelState, GetModelState, SpawnModel, GetWorldProperties, DeleteModel
 from gazebo_msgs.msg import ModelState
 import tf
-from AbstractSimulator import AbstractSimulator
+import AbstractSimulator
 import tf.transformations
 import time
 
 
-class GazeboBot(AbstractSimulator):
+class GazeboBot(AbstractSimulator.AbstractSimulator):
     def __init__(self, homeDir, robotModelName="turtlebot3_burger", obstacleModelName="cardboard_box", goalModelName="bowl", movementDelay=1):
         self.modelNames = {"robot" : robotModelName, "obstacle" : obstacleModelName, "target": goalModelName}
         self.modelCount = {self.modelNames["robot"] : 0, self.modelNames["obstacle"] : 0, self.modelNames["target"] : 0}
