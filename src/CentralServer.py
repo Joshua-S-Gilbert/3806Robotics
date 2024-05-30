@@ -100,8 +100,18 @@ class CentralServer:
             return
         agent = RLAgent(Environment(worldFileName))
         agent.qTable = np.copy(self.globalQTable)
-        path = agent.Test()
+        path, foundGoal = agent.Test()
         agent.environment.WriteWorld("testWorld.txt")
         agent.WritePath(path, resultsFileName)
     
+    def RunStatsTest(self, runs = 100, worldFileName="world.txt"):
+        totalFoundGoal = 0
+        agent = RLAgent(Environment(worldFileName))
+        agent.qTable = np.copy(self.globalQTable)
+        for i in range(runs):
+            agent.environment.NewStartingPos()
+            path, foundGoal = agent.Test()
+            if foundGoal:
+                totalFoundGoal += 1
+        print(f"runs: {runs} found goals: {totalFoundGoal} percent success: {(totalFoundGoal/runs)*100}%")
 
