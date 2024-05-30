@@ -46,14 +46,14 @@ class Timer:
         return self.duration
 
 class CentralServer:
-    def __init__(self, numAgents, fileName="world.txt"):
-        self.environment = Environment(fileName)
+    def __init__(self, numAgents):
+        self.environment = Environment()
         self.robotController = RobotController(self.environment.startingPos,
                                                self.environment.worldGrid,
                                                self.environment.stateTypes)
         self.globalQTable = None
         self.localQTables = []
-        self.agentsList = [RLAgent(Environment(fileName)) for x in range(numAgents)]
+        self.agentsList = [RLAgent(self.environment) for x in range(numAgents)]
         self.timers = Timer()
 
     def AggregateQTables(self):
@@ -77,40 +77,6 @@ class CentralServer:
         if (printResults):
             print(self.globalQTable)
         print(f"Time Taken: {self.timers.GetDuration()}")
-    
-    def SaveGlobalTable(self, fileName="globalQTable.txt"):
-        with open(fileName, 'w') as f:
-            shape = np.shape(self.globalQTable)
-            f.write(f"{shape[0]} {shape[1]} {shape[2]}\n")
-            flatArray = self.globalQTable.flatten()
-            for item in flatArray:
-                f.write(f"{item}\n")
-
-    def LoadGlobalTable(self, fileName="globalQTable.txt"):
-        with open(fileName, 'r') as f:
-            shape = tuple(map(int, f.readline().strip().split()))
-            flatArray = []
-            for line in f:
-                flatArray.append(float(line.strip()))
-            self.globalQTable = np.array(flatArray).reshape(shape)
-    
-    def SaveAllTables(self, fileName="allTables.txt"):
-        temp = np.asarray(self.localQTables)
-        with open(fileName, 'w') as f:
-            shape = np.shape(temp)
-            f.write(f"{shape[0]} {shape[1]} {shape[2]} {shape[3]}\n")
-            flatArray = temp.flatten()
-            for item in flatArray:
-                f.write(f"{item}\n")
-
-    def LoadAllTables(self, fileName="allTables.txt"):
-        with open(fileName, 'r') as f:
-            shape = tuple(map(int, f.readline().strip().split()))
-            flatArray = []
-            for line in f:
-                flatArray.append(float(line.strip()))
-            temp = np.array(flatArray).reshape(shape)
-            self.localQTables = temp.tolist()
 
     def UpdateAgents(self):
         if (self.globalQTable is None):
@@ -119,15 +85,15 @@ class CentralServer:
         for agent in self.agentsList:
             agent.qTable = self.globalQTable
 
-    def RunTest(self, worldFileName="world.txt", resultsFileName="results.txt"):
+    def RunTest(self):
         if self.globalQTable is None:
             print("Error: global q table not trained")
             return
-        agent = RLAgent(Environment(worldFileName))
+        agent = RLAgent(self.environment)
+        agent.environment.NewStartingPos()
         agent.qTable = np.copy(self.globalQTable)
         path, foundGoal = agent.Test()
-        agent.environment.WriteWorld("testWorld.txt")
-        agent.WritePath(path, resultsFileName)
+        return path
     
     def RunStatsTest(self, runs = 100, worldFileName="world.txt"):
         totalFoundGoal = 0
@@ -141,71 +107,31 @@ class CentralServer:
         print(f"runs: {runs} found goals: {totalFoundGoal} percent success: {(totalFoundGoal/runs)*100}%")
 
 class Environment:
-    def __init__(self, fileName):
-        #map data
-        self.stateTypes = {"unvisited":"O",
+    def __init__(self, 
+                 stateTypes=dict({"unvisited":"O",
                            "obstacle":"B",
                            "target":"G",
-                           "invalid":"N"}
-        self.numberObstacles = 0
-        self.numberTargets = 1
-        self.gridSize = [8,8]
-        self.startingPos = np.asarray([0,0])
-        self.generateGrid = False
-        self.worldGrid = []
-
-        self.ReadFile(fileName)
-
-    def ReadFile(self, fileName):
-        try:
-            with open(fileName, "r") as file:
-                lines = file.readlines()
-                numVars = 9
-                for i in range(numVars):
-                    # prop meants property. there is a default method called property
-                    prop, value = lines[i].strip().split()
-                    self.ConvertValue(prop, value)
-                if not self.generateGrid:
-                    self.worldGrid = np.zeros((self.gridSize[0], self.gridSize[1]), dtype=str)
-                    gridLength = 0
-                    for i in range(numVars, len(lines)):
-                        for j in range(self.gridSize[1]):
-                            self.worldGrid[gridLength][j]=lines[i][j]
-                        gridLength += 1
-                            
-            if self.generateGrid:
-                self.GenerateGrid()
-
-        except FileNotFoundError:
-            print(f"Error: Configuration file {fileName} not found")
-
-    def ConvertValue(self, prop:str, value:str):
-        if value.find(",") != -1:
-            tempList = []
-            tempListstring = value.split(',')
-            try:
-                for i in range(2):  # tempListString should only ever be 2 size
-                    tempList.append(int(tempListstring[i]))
-            except Exception as error:
-                print(f"Error: failed to read gridSize or startingPos. {error}")
-            self.UpdateProperty(prop, tempList)
-        elif value.isdigit():
-            self.UpdateProperty(prop, int(value))
-        elif value == "True":
-            self.UpdateProperty(prop, True)
-        elif value == "False":
-            self.UpdateProperty(prop, False)
+                           "invalid":"N"}),
+                 numberObstacles=0,
+                 numberTargets=1,
+                 gridSize=(int(10),int(10)),
+                 startingPos=np.asarray([0,0]),
+                 generateGrid=True,
+                 worldGrid=None):
+        #map data
+        self.stateTypes = stateTypes
+        self.numberObstacles = numberObstacles
+        self.numberTargets = numberTargets
+        self.gridSize = gridSize
+        self.startingPos = startingPos
+        self.generateGrid = generateGrid
+        if self.generateGrid:
+            self.GenerateGrid()
         else:
-            self.stateTypes[prop] = value
-    
-    def UpdateProperty(self, prop:str, value):
-        if hasattr(self, prop):
-            setattr(self, prop, value)
-        else:
-            print(f"Error: couldnt find property {prop}")
+            worldGrid=worldGrid
 
     def GenerateGrid(self):
-        self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), fill_value="O", dtype=str)
+        self.worldGrid = np.full((self.gridSize[0], self.gridSize[1]), dtype=str, fill_value=self.stateTypes['unvisited'])
         self.NewObstaclePos()
         self.PlaceItems(self.stateTypes["target"], self.numberTargets)
         self.NewStartingPos()
@@ -231,25 +157,7 @@ class Environment:
                 self.startingPos = np.asarray([row, col])
                 FoundStartingPosition=True
 
-    def WriteWorld(self, fileName):
-        with open(fileName, "w") as file:
-            file.write(f"unvisited {self.stateTypes['unvisited']}\n")
-            file.write(f"obstacle {self.stateTypes['obstacle']}\n")
-            file.write(f"numberObstacles {self.numberObstacles}\n")
-            file.write(f"target {self.stateTypes['target']}\n")
-            file.write(f"invalid {self.stateTypes['invalid']}\n")
-            file.write(f"numberTargets {self.numberTargets}\n")
-            file.write(f"gridSize {self.gridSize[0]},{self.gridSize[1]}\n")
-            file.write(f"startingPos {self.startingPos[0]},{self.startingPos[1]}\n")
-            file.write(f"generateGrid False\n")
-            for line in self.worldGrid:
-                tempstring = ""
-                for char in line:
-                    tempstring += char
-                tempstring += "\n"
-                file.write(tempstring)
-
-class GazeboBot(AbstractSimulator):
+class GazeboBot:
     def __init__(self, homeDir, robotModelName="turtlebot3_burger", obstacleModelName="cardboard_box", goalModelName="bowl", movementDelay=1):
         self.modelNames = {"robot" : robotModelName, "obstacle" : obstacleModelName, "target": goalModelName}
         self.modelCount = {self.modelNames["robot"] : 0, self.modelNames["obstacle"] : 0, self.modelNames["target"] : 0}
@@ -265,7 +173,7 @@ class GazeboBot(AbstractSimulator):
         self.SpawnModelService = rospy.ServiceProxy('/gazebo/spawn_sdf_model', SpawnModel)
         self.GetWorldPropertiesService = rospy.ServiceProxy('/gazebo/get_world_properties', GetWorldProperties)
         self.DeleteModelService = rospy.ServiceProxy('/gazebo/delete_model', DeleteModel)
-        self.homeDir = homeDir
+        self.homeDir = homeDir + '/'
 
     def ClearWorld(self):
         try:
@@ -274,7 +182,7 @@ class GazeboBot(AbstractSimulator):
             for modelName in removalModelNames:
                 if modelName != "ground_plane" and modelName != "sun":  # Don't delete default models
                     self.DeleteModelService(modelName)
-            self.modelNames["robot"] = {self.modelCount["robot"] : 0, self.modelCount["obstacle"] : 0, self.modelCount["target"] : 0}
+            self.modelCount = {self.modelNames['robot'] : 0, self.modelNames["obstacle"] : 0, self.modelNames["target"] : 0}
             rospy.loginfo("Cleared all models from Gazebo world.")
         except rospy.ServiceException as error:
             rospy.logerr(f"Service call failed: {error}")
@@ -290,17 +198,14 @@ class GazeboBot(AbstractSimulator):
     def SpawnRobot(self, x, y):
         self.SpawnModel(self.modelNames["robot"], x, y)   
 
-    def RobotWalkPath(self, fileName:str, robotNumber):
-        with open(fileName, "r") as file:
-            lines = file.readlines()
-            for i in range(len(lines)):
-                line = lines[i].strip().split(',')
-                if robotNumber > self.modelCount[self.modelNames["robot"]] and i == 0:
-                    self.SpawnRobot(float(line[0]), float(line[1]))
-                    time.sleep(self.movementDelay*2)
-                else:
-                    self.SetPos(f"{self.modelNames['robot']}{robotNumber}", float(line[0]), float(line[1]))
-                    time.sleep(self.movementDelay)
+    def RobotWalkPath(self, path, robotNumber):
+        for i in range(np.shape(path)[0]):
+            if robotNumber > self.modelCount[self.modelNames["robot"]] and i == 0:
+                self.SpawnRobot(float(path[i][0]), float(path[i][1]))
+                time.sleep(self.movementDelay*2)
+            else:
+                self.SetPos(f"{self.modelNames['robot']}{robotNumber}", float(path[i][0]), float(path[i][1]))
+                time.sleep(self.movementDelay)
 
     def SpawnModel(self, modelName, x, y):
         modelXML = self.getModelXML(modelName)
@@ -351,7 +256,7 @@ class GazeboBot(AbstractSimulator):
         
     def getModelXML(self, modelName):
         try:
-            with open(f"{self.homeDir}catkin_ws/src/3806Robotics/models/{modelName}.sdf", "r") as file:
+            with open(f"{self.homeDir}catkin_ws/src/3806Robotics/models/{modelName}/model.sdf", "r") as file:
                 model_xml = file.read()
             return model_xml
         except Exception as e:
@@ -543,26 +448,20 @@ class RobotController:
         return self.actions
 
 def RunSimulation(homeDir):
-    worldFile = "world.txt"
-    testFile = "agentWorld.txt"
-    resultsFile = "results.txt"
-    allTables = "allTables.txt"
-    globalFile = "globalQTables.txt"
-
     # Running 1 agent for 1 batch on just a fixed for now to check gazebo works
-    
+    print("initialised. please wait for training to complete")
     # Training model
-    server = CentralServer(1, worldFile)
+    server = CentralServer(30)
     server.RunAgents(batches = 1, printResults=False)
 
     # Creating test path
-    server.RunTest(worldFile, resultsFile)
+    path = server.RunTest()
 
     # Plotting in gazebo
     simulation = GazeboBot(homeDir)
     simulation.ClearWorld()
     simulation.PlotWorld(server.environment.worldGrid, server.environment.gridSize, server.environment.stateTypes)
-    simulation.RobotWalkPath(testFile, 1)
+    simulation.RobotWalkPath(path, 1)
     rospy.spin()
 
 if __name__ == "__main__":
