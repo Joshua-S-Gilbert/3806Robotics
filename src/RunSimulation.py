@@ -25,8 +25,7 @@ def RunSimulation(homeDir):
     simulation = GazeboBot(homeDir)
     simulation.ClearWorld()
     simulation.PlotWorld(server.environment.worldGrid, server.environment.gridSize, server.environment.stateTypes)
-    simulation.SpawnRobot()
-    simulation.RobotWalkPath()
+    simulation.RobotWalkPath(testFile, 1)
     rospy.spin()
 
 if __name__ == "__main__":
