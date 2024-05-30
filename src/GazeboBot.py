@@ -48,13 +48,15 @@ class GazeboBot(AbstractSimulator):
         self.SpawnModel(self.modelNames["robot"], x, y)   
 
     def RobotWalkPath(self, fileName:str, robotNumber):
-        if robotNumber > self.modelCount[self.modelNames["robot"]]:
-            print(f"Error: robot {robotNumber} hasn't been spawned yet.")
-            return None
         with open(fileName, "r") as file:
             lines = file.readlines()
-            for i in range(1, len(lines)):
+            if robotNumber > self.modelCount[self.modelNames["robot"]]:
+                line = lines[0].strip().split(',')
+                self.SpawnRobot(float(line[0]), float(line[1]))
+            for i in range(len(lines)):
                 line = lines[i].strip().split(',')
+                if robotNumber > self.modelCount[self.modelNames["robot"]] and i == 0:
+                    self.SpawnRobot()
                 self.SetPos(f"{self.modelNames["robot"]}{robotNumber}", float(line[0]), float(line[1]))
                 time.sleep(self.movementDelay)
 
