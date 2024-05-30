@@ -4,6 +4,6 @@ numberObstacles 4
 target G
 invalid N
 numberTargets 1
-gridSize 8,8
+gridSize 32,32
 startingPos 1,0
 generateGrid True
