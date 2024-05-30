@@ -112,7 +112,7 @@ class Environment:
                            "obstacle":"B",
                            "target":"G",
                            "invalid":"N"}),
-                 numberObstacles=0,
+                 numberObstacles=10,
                  numberTargets=1,
                  gridSize=(int(10),int(10)),
                  startingPos=np.asarray([0,0]),
