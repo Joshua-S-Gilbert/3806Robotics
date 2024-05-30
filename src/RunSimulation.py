@@ -1,5 +1,5 @@
-from CentralServer import CentralServer
-from GazeboBot import GazeboBot
+import CentralServer
+import GazeboBot
 import numpy as np
 import os
 import sys
@@ -15,14 +15,14 @@ def RunSimulation(homeDir):
     # Running 1 agent for 1 batch on just a fixed for now to check gazebo works
     
     # Training model
-    server = CentralServer(1, testFile)
+    server = CentralServer.CentralServer(1, testFile)
     server.RunAgents(batches = 1, printResults=False)
 
     # Creating test path
     server.RunTest(testFile, resultsFile)
 
     # Plotting in gazebo
-    simulation = GazeboBot(homeDir)
+    simulation = GazeboBot.GazeboBot(homeDir)
     simulation.ClearWorld()
     simulation.PlotWorld(server.environment.worldGrid, server.environment.gridSize, server.environment.stateTypes)
     simulation.RobotWalkPath(testFile, 1)

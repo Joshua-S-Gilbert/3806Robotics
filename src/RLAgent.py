@@ -1,6 +1,6 @@
 import numpy as np
-from Environment import Environment
-from RobotController import RobotController
+import Environment
+import RobotController
 
 class RLAgent:
     """
@@ -8,9 +8,9 @@ class RLAgent:
         to train the agent to find a path
 
     """
-    def __init__(self, environment:Environment):
+    def __init__(self, environment):
         self.environment = environment
-        self.robotController = RobotController(self.environment.startingPos,
+        self.robotController = RobotController.RobotController(self.environment.startingPos,
                                                self.environment.worldGrid, 
                                                self.environment.stateTypes)
         self.qTable = np.zeros((self.environment.gridSize[0],
