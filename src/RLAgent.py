@@ -29,7 +29,7 @@ class RLAgent:
         
     def RunTraining(self):
         ## maybe optimise alpha and epsilon here in future
-        path, rewardTrace, pathLengthTrace = self.Train(gamma=0.99, alpha=0.1, epsilon=0.1, maxIterations=10000, maxSteps=1000)
+        path, rewardTrace, pathLengthTrace = self.Train(gamma=0.99, alpha=0.1, epsilon=0.1, maxIterations=500, maxSteps=1000)
         return path, rewardTrace, pathLengthTrace
     
     def Train(self, gamma=0.99, 
@@ -101,6 +101,7 @@ class RLAgent:
         # run greedy from final qTable
         actionNumber = np.argmax(self.qTable[state[0], state[1]])
         path = np.array(state)
+        foundGoal = False
         for step in range(maxSteps):
             self.robotController.GetActionValue(actionNumber,
                                                 self.environment.worldGrid,
@@ -112,9 +113,10 @@ class RLAgent:
             if self.robotController.IsGoal(self.environment.worldGrid,
                                             self.environment.gridSize,
                                             self.environment.stateTypes):
+                foundGoal = True
                 break
             actionNumber = nextActionNumber
-        return path
+        return path, foundGoal
 
     def WritePath(self, path, fileName):
         with open(fileName, "w") as file:

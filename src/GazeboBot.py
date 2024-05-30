@@ -57,7 +57,7 @@ class GazeboBot(AbstractSimulator):
                 line = lines[i].strip().split(',')
                 if robotNumber > self.modelCount[self.modelNames["robot"]] and i == 0:
                     self.SpawnRobot()
-                self.SetPos(f"{self.modelNames["robot"]}{robotNumber}", float(line[0]), float(line[1]))
+                self.SetPos(f"{self.modelNames['robot']}{robotNumber}", float(line[0]), float(line[1]))
                 time.sleep(self.movementDelay)
 
     def SpawnModel(self, modelName, x, y):
