@@ -57,7 +57,7 @@ class GazeboBot(AbstractSimulator.AbstractSimulator):
                     self.SpawnRobot(float(line[0]), float(line[1]))
                     time.sleep(self.movementDelay*2)
                 else:
-                    self.SetPos(f"{self.modelNames["robot"]}{robotNumber}", float(line[0]), float(line[1]))
+                    self.SetPos(f"{self.modelNames['robot']}{robotNumber}", float(line[0]), float(line[1]))
                     time.sleep(self.movementDelay)
 
     def SpawnModel(self, modelName, x, y):
