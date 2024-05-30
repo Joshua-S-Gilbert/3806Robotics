@@ -518,7 +518,7 @@ class RobotController:
             if (state[0] < 0 or state[1] < 0 or
                state[0] >= gridSize[0] or state[1] >= gridSize[1]):
                return stateTypes["invalid"] # state not inside grid
-            return worldGrid[state[0], state[1]]
+            return worldGrid[state[0]][state[1]]
         else:
             print("Warning: Invalid state" + str(state))
             return stateTypes["invalid"] # State not valid
@@ -552,11 +552,11 @@ def RunSimulation(homeDir):
     # Running 1 agent for 1 batch on just a fixed for now to check gazebo works
     
     # Training model
-    server = CentralServer(1, testFile)
+    server = CentralServer(1, worldFile)
     server.RunAgents(batches = 1, printResults=False)
 
     # Creating test path
-    server.RunTest(testFile, resultsFile)
+    server.RunTest(worldFile, resultsFile)
 
     # Plotting in gazebo
     simulation = GazeboBot(homeDir)
