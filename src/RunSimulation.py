@@ -59,7 +59,7 @@ class CentralServer:
     def AggregateQTables(self):
         self.globalQTable = np.mean(self.localQTables, axis=0)
     
-    def RunAgents(self, batches=5, printResults=False):
+    def RunAgents(self, batches=1, printResults=False):
         self.timers.Start()
         for i in range(batches):
             for agent in range(len(self.agentsList)):

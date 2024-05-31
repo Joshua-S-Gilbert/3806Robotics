@@ -1,9 +1,9 @@
 unvisited O
 obstacle B
-numberObstacles 4
+numberObstacles 0
 target G
 invalid N
 numberTargets 1
-gridSize 32,32
+gridSize 15,15
 startingPos 1,0
 generateGrid True

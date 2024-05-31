@@ -1,7 +1,7 @@
 import numpy as np
-import Environment
-import RobotController
-import RLAgent
+from Environment import Environment
+from RobotController import RobotController
+from RLAgent import RLAgent
 import time
 
 class Timer:
@@ -22,19 +22,19 @@ class Timer:
 
 class CentralServer:
     def __init__(self, numAgents, fileName="world.txt"):
-        self.environment = Environment.Environment(fileName)
-        self.robotController = RobotController.RobotController(self.environment.startingPos,
+        self.environment = Environment(fileName)
+        self.robotController = RobotController(self.environment.startingPos,
                                                self.environment.worldGrid,
                                                self.environment.stateTypes)
         self.globalQTable = None
         self.localQTables = []
-        self.agentsList = [RLAgent.RLAgent(Environment(fileName)) for x in range(numAgents)]
+        self.agentsList = [RLAgent(self.environment) for x in range(numAgents)]
         self.timers = Timer()
 
     def AggregateQTables(self):
         self.globalQTable = np.mean(self.localQTables, axis=0)
     
-    def RunAgents(self, batches=5, printResults=False):
+    def RunAgents(self, batches=1, printResults=False):
         self.timers.Start()
         for i in range(batches):
             for agent in range(len(self.agentsList)):
